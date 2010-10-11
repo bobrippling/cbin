@@ -44,8 +44,10 @@ void perrorf(char *fmt, ...)
 
 /* ----- copying ----- */
 
-#define progress(name, now, total) \
-	printf("\r%s: %ld/%ld", name, now, total)
+void progress(const char *name, size_t now, size_t total)
+{
+	printf("%s: %3.2f%% (%ld/%ld)\r", name, now, total, 100.0 * now / total);
+}
 
 #define progressdone(name, siz) \
 	do{ \
@@ -221,6 +223,8 @@ int main(int argc, char **argv)
 		progname++;
 	else
 		progname = *argv;
+
+	setvbuf(stdout, NULL, _IONBF, 0);
 
 	if(!strcmp(progname, "pcp"))
 		i_am_cp = 1;
