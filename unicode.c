@@ -3,6 +3,7 @@
 #include <wchar.h>
 #include <locale.h>
 #include <string.h>
+#include <stdarg.h>
 
 #define ARGV_WIDE   "textwide"
 #define ARGV_STRIKE "textstrike"
@@ -10,6 +11,17 @@
 /*
  * TODO: generalise the fgets() business
  */
+
+void perrorf(const char *fmt, ...)
+{
+	va_list l;
+
+	va_start(l, fmt);
+	vfprintf(stderr, fmt, l);
+	va_end(l);
+
+	perror(NULL);
+}
 
 void strike(FILE *f)
 {
@@ -70,7 +82,7 @@ int main(int argc, char **argv)
 		for(i = 1; i < argc; i++){
 			FILE *f = fopen(argv[i], "r");
 			if(!f){
-				perror(argv[i]);
+				perrorf("%s: %s: ", *argv, argv[i]);
 				continue;
 			}
 			func(f);
