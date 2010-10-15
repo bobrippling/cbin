@@ -6,7 +6,7 @@ int sentence(FILE *f)
 	int c, capnext = 1;
 
 	while((c = fgetc(f)) != EOF){
-		if(!isalpha(c)){
+		if(!isalpha(c) && c != '\''){
 			capnext = 1;
 		}else if(capnext){
 			capnext = 0;
