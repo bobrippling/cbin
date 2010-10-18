@@ -34,7 +34,7 @@ void eprintf(char *fmt, ...)
 
 void progress(const char *name, size_t now, size_t total)
 {
-	printf("%s: %3.2f%% (%ld/%ld)\r", name, now, total, 100.0 * now / total);
+	printf("`%s': %3.2f%% (%ld/%ld)\r", name, now, total, 100.0 * now / total);
 }
 
 #define progressdone(name, siz) \
@@ -54,7 +54,7 @@ size_t filelen(char *file)
 		 * should still have read access, unless it's
 		 * been deleted/permission change'd during
 		 */
-		perrorf("filesize: %s", file);
+		perrorf("filesize: `%s'", file);
 		return -1;
 	}
 	return st.st_size;
@@ -93,7 +93,7 @@ int samefile(char *a, char *b)
 	if(stat(a, &st)){
 		if(errno == ENOENT)
 			return 0;
-		perrorf("stat: %s", a);
+		perrorf("stat: `%s'", a);
 		exit(1);
 	}
 	inode = st.st_ino;
@@ -101,7 +101,7 @@ int samefile(char *a, char *b)
 	if(stat(b, &st)){
 		if(errno == ENOENT)
 			return 0;
-		perrorf("stat: %s", b);
+		perrorf("stat: `%s'", b);
 		exit(1);
 	}
 
@@ -115,10 +115,11 @@ int copy(char *dest, char *src)
 	char *actualdest = dest;
 
 	if(!(in = fopen(src, "r"))){
-		perrorf("open: %s", src);
+		perrorf("open: `%s'", src);
 		return 1;
 	}
 
+	/* TODO: make dir if it doesn't exist */
 	if(!(out = fopen(dest, "w"))){
 		if(errno == EISDIR){
 			char *srcbase = strrchr(src, '/');
@@ -137,12 +138,12 @@ int copy(char *dest, char *src)
 
 			out = fopen(actualdest, "w");
 			if(!out){
-				perrorf("open: %s", actualdest);
+				perrorf("open: `%s'", actualdest);
 				fclose(in);
 				return 1;
 			}
 		}else{
-			perrorf("open: %s", dest);
+			perrorf("open: `%s'", dest);
 			fclose(in);
 			return 1;
 		}
@@ -154,7 +155,7 @@ int copy(char *dest, char *src)
 	fclose(out);
 
 	if(!i_am_cp && remove(src))
-		perrorf("non-fatal: remove: %s", src);
+		perrorf("non-fatal: remove: `%s'", src);
 
 	return ret;
 }
@@ -239,10 +240,10 @@ int main(int argc, char **argv)
 		struct stat st;
 
 		if(stat(dest, &st)){
-			perrorf("stat: %s", dest);
+			perrorf("stat: `%s'", dest);
 			return 1;
 		}else if(!S_ISDIR(st.st_mode)){
-			eprintf("%s: not a dir", dest);
+			eprintf("`%s': not a dir", dest);
 			return 1;
 		}
 

@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 				ret += bytes(f, nbytes);
 				fclose(f);
 			}else{
-				perrorf("%s: %s: ", *argv, argv[i]);
+				perrorf("open: %s", argv[i]);
 				ret++;
 			}
 		}
