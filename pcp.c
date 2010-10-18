@@ -30,18 +30,6 @@ void eprintf(char *fmt, ...)
 	fputc('\n', stderr);
 }
 
-void perrorf(char *fmt, ...)
-{
-	va_list l;
-
-	fprintf(stderr, "%s: ", progname);
-	va_start(l, fmt);
-	vfprintf(stderr, fmt, l);
-	va_end(l);
-	fputs(": ", stderr);
-	perror(NULL);
-}
-
 /* ----- copying ----- */
 
 void progress(const char *name, size_t now, size_t total)

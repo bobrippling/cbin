@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "lib.h"
 
 const char *progname;
 int decrypt = 0;
@@ -14,24 +15,7 @@ char randsaltchar(void);
 int cryptfile(FILE *f);
 ssize_t getline2(char **lineptr, size_t *n, FILE *stream);
 
-void perrorf(const char *, ...);
 void usage(void);
-
-
-void perrorf(const char *s, ...)
-{
-	va_list l;
-	int eno = errno;
-
-	va_start(l, s);
-	vfprintf(stderr, s, l);
-	va_end(l);
-
-	fputs(": ", stderr);
-
-	errno = eno;
-	perror(NULL);
-}
 
 ssize_t getline2(char **lineptr, size_t *n, FILE *stream)
 {

@@ -1,6 +1,6 @@
-BINS = ls2 makeheaders rot13 eolcheck cf \
+BINS = ls2 makeheaders rot13 eolcheck \
 			 shhcat trim crypt sentc pcp \
-			 textwide textstrike
+			 textwide textstrike bytes
 
 .PHONY: clean all mostlyclean
 
@@ -14,20 +14,25 @@ mostlyclean:
 
 textwide: unicode.c
 	@echo CC $@
-	@${CC} ${CFLAGS} -o $@ $<
+	@${CC} ${CFLAGS} -o $@ $^
 
 textstrike: unicode.c
 	@echo CC $@
-	@${CC} ${CFLAGS} -o $@ $<
+	@${CC} ${CFLAGS} -o $@ $^
 
 %:%.c
 	@echo CC $@
-	@${CC} ${CFLAGS} -o $@ $<
+	@${CC} ${CFLAGS} -o $@ $^
 
 # extra options
-crypt:crypt.c
+crypt:crypt.o
 	@echo CC -lcrypt $@
-	@${CC} ${CFLAGS} -lcrypt -o $@ $<
+	@${CC} ${CFLAGS} -lcrypt -o $@ $^
 
 # extra deps
-cf:strings.o
+cf:         strings.o
+pcp:        lib.o
+crypt:      lib.o
+textwide:   lib.o
+textstrike: lib.o
+bytes:      lib.o
