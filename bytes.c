@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 	if(nbytes <= 0)
 		USAGE();
 
-	if(i == argc)
+	if(2 == argc)
 		ret += bytes(stdin, nbytes);
 	else
 		for(i = 2; i < argc; i++){
