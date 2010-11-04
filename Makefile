@@ -1,6 +1,6 @@
 BINS = ls2 makeheaders rot13 eolcheck \
 			 shhcat trim crypt sentc pcp \
-			 textwide textstrike bytes ncat2
+			 textwide textstrike bytes rcat2 scanfcat
 
 .PHONY: clean all mostlyclean
 

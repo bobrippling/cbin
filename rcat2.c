@@ -72,8 +72,6 @@ usage:
 
 	if(serv){
 		int client;
-		struct sockaddr_in dummy;
-		socklen_t dummylen = sizeof dummy;
 
 		if(bind(sock, (struct sockaddr *)&addr, sizeof addr) == -1){
 			perror("bind()");
@@ -87,7 +85,7 @@ usage:
 			goto bail;
 		}
 
-		client = accept(sock, (struct sockaddr *)&dummy, &dummylen);
+		client = accept(sock, NULL, 0);
 		if(client == -1){
 			perror("accept()");
 			ret = 1;
