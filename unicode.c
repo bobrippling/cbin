@@ -37,6 +37,7 @@ void wide(FILE *f)
 
 	while(fgets(buffa, 256, f)){
 		char *c;
+		/* increment with u+fee0 and s/U+ff00/U+3000/g */
 		for(c = buffa; *c; ++c)
 			printf("%lc", '!' <= *c && *c <= '~' ? *c + 0xfee0
 				: *c == ' ' ? 0x3000
