@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -11,9 +13,19 @@
 		while(read(in, &buf, sizeof buf) > 0) \
 			write(STDOUT_FILENO, &buf, sizeof buf)
 
+struct termios origattr;
+
+void fin(int sig)
+{
+	if(tcsetattr(STDIN_FILENO, TCSANOW, &origattr))
+		perror("(restore) tcsetattr()");
+	exit(128 + sig);
+}
+
+
 int main(int argc, char **argv)
 {
-	struct termios attr, origattr;
+	struct termios attr;
 	int i;
 	char buf;
 
@@ -28,6 +40,12 @@ int main(int argc, char **argv)
 	}
 
 	memcpy(&origattr, &attr, sizeof attr);
+
+	/* usual suspects */
+	signal(SIGINT,  fin);
+	signal(SIGHUP,  fin);
+	signal(SIGTERM, fin);
+	signal(SIGQUIT, fin);
 
 	attr.c_lflag &= ~ECHO;
 
@@ -50,10 +68,6 @@ int main(int argc, char **argv)
 			}
 		}
 
-	if(tcsetattr(STDIN_FILENO, TCSANOW, &origattr)){
-		perror("(restore) tcsetattr()");
-		return 1;
-	}
-
-	return 0;
+	fin(-128);
+	return 0; /* unreachable */
 }
