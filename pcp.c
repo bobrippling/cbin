@@ -7,7 +7,10 @@
 #include <errno.h>
 #include <limits.h>
 
-#define BSIZ 2048
+#include "lib.h"
+
+#define BSIZ 4096
+#define PROGRESS_COUNT 30
 
 int i_am_cp;
 char *progname;
@@ -34,7 +37,7 @@ void eprintf(char *fmt, ...)
 
 void progress(const char *name, size_t now, size_t total)
 {
-	printf("`%s': %3.2f%% (%ld/%ld)\r", name, now, total, 100.0 * now / total);
+	printf("`%s': %3.2f%% (%ld/%ld)\r", name, 100.0 * now / total, now, total);
 }
 
 #define progressdone(name, siz) \
@@ -55,7 +58,7 @@ size_t filelen(char *file)
 		 * been deleted/permission change'd during
 		 */
 		perrorf("filesize: `%s'", file);
-		return -1;
+		exit(1);
 	}
 	return st.st_size;
 }
@@ -64,7 +67,7 @@ int filecopy(FILE *in, FILE *out, char *outname, size_t insiz)
 {
 	char buffer[BSIZ];
 	size_t nread, total = 0;
-	int ret = 0;
+	int ret = 0, lastprogress = 0;
 
 	while((nread = fread(buffer, sizeof buffer[0], BSIZ, in)) > 0){
 		if(fwrite(buffer, sizeof buffer[0], nread, out) <= 0){
@@ -72,7 +75,10 @@ int filecopy(FILE *in, FILE *out, char *outname, size_t insiz)
 			ret = 1;
 			goto bail;
 		}
-		progress(outname, total += nread, insiz);
+		if(++lastprogress > PROGRESS_COUNT){
+			progress(outname, total += nread, insiz);
+			lastprogress = 0;
+		}
 	}
 
 	progressdone(outname, insiz);
@@ -88,7 +94,7 @@ bail:
 int samefile(char *a, char *b)
 {
 	struct stat st;
-	int inode;
+	unsigned int inode;
 
 	if(stat(a, &st)){
 		if(errno == ENOENT)
@@ -114,8 +120,13 @@ int copy(char *dest, char *src)
 	int ret;
 	char *actualdest = dest;
 
+	if(samefile(dest, src)){
+		eprintf("`%s' and `%s' are the same file", dest, src);
+		return 1;
+	}
+
 	if(!(in = fopen(src, "r"))){
-		perrorf("open: `%s'", src);
+		perrorf("open (for read): `%s'", src);
 		return 1;
 	}
 
@@ -138,12 +149,12 @@ int copy(char *dest, char *src)
 
 			out = fopen(actualdest, "w");
 			if(!out){
-				perrorf("open: `%s'", actualdest);
+				perrorf("open (for write): `%s'", actualdest);
 				fclose(in);
 				return 1;
 			}
 		}else{
-			perrorf("open: `%s'", dest);
+			perrorf("open (for write): `%s'", dest);
 			fclose(in);
 			return 1;
 		}
@@ -179,7 +190,10 @@ int dircopy(char *base, char *src[], int nsrc)
 			dest = tmp;
 		}
 
-		sprintf(dest, "%s/%s", base, src[i]);
+		if(*src[i] != '/')
+			sprintf(dest, "%s/%s", base, src[i]);
+		else
+			strcpy(dest, src[i]);
 
 		if(copy(dest, src[i]))
 			BAIL();

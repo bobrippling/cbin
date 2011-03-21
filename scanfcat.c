@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <ctype.h>
 
 int sfc(FILE *f)
 {
