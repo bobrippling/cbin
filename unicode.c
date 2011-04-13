@@ -4,50 +4,46 @@
 #include <locale.h>
 #include <string.h>
 #include <stdarg.h>
+#include <inttypes.h>
 
 #define ARGV_WIDE   "textwide"
 #define ARGV_STRIKE "textstrike"
 
 #include "lib.h"
 
-/*
- * TODO: generalise the fgets() business
- */
-
-void strike(FILE *f)
+void process(FILE *f, void (*handle)(char))
 {
 	char buffa[256];
 
 	while(fgets(buffa, 256, f)){
 		char *c;
 		for(c = buffa; *c; ++c)
-			if(*c == '\n')
-				putwchar('\n');
-			else
-				printf("%lc%lc", (int16_t)*c, (int16_t)0x336);
+			handle(*c);
 	}
 
 	if(ferror(f))
 		perror("fgets()");
 }
 
-void wide(FILE *f)
+void strike(char c)
 {
-	char buffa[256];
+	if(c == '\n')
+		putwchar('\n');
+	else
+		printf("%lc%lc", (int16_t)c, (int16_t)0x336);
+}
 
-	while(fgets(buffa, 256, f)){
-		char *c;
-		/* increment with u+fee0 and s/U+ff00/U+3000/g */
-		for(c = buffa; *c; ++c)
-			printf("%lc", '!' <= *c && *c <= '~' ? *c + 0xfee0
-				: *c == ' ' ? 0x3000
-				: *c);
-	}
+void wide(char c)
+{
+	printf("%lc", '!' <= c && c <= '~' ? c + 0xfee0
+		: c == ' ' ? 0x3000
+		: c);
 }
 
 int main(int argc, char **argv)
 {
-	void (*func)(FILE *);
+	void (*func)(char);
+	char *argv0 = *argv;
 	char *pos;
 	int i;
 
@@ -66,7 +62,7 @@ int main(int argc, char **argv)
 		func = strike;
 	else{
 		fprintf(stderr, "Usage: %s [files...]\n"
-				    "Must be invoked as " ARGV_WIDE " or " ARGV_STRIKE "\n", *argv);
+				    "Must be invoked as " ARGV_WIDE " or " ARGV_STRIKE "\n", argv0);
 		return 1;
 	}
 
@@ -77,11 +73,11 @@ int main(int argc, char **argv)
 				perrorf("%s: ", argv[i]);
 				continue;
 			}
-			func(f);
+			process(f, func);
 			fclose(f);
 		}
 	else
-		func(stdin);
+		process(stdin, func);
 
 	return 0;
 }

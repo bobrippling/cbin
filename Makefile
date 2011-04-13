@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -pedantic
+CFLAGS = -Wall -Wextra -pedantic -std=c99
 
 BINS = ls2 makeheaders rot13 eolcheck \
 			 shhcat trim crypt sentc pcp \
