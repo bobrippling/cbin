@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "lib.h"
+
 void usage(const char *n)
 {
 	fprintf(stderr, "Usage: %s bytes-to-extract\n", n);

@@ -12,6 +12,10 @@
 #define BSIZ 4096
 #define PROGRESS_COUNT 30
 
+#ifndef PATH_MAX
+# define PATH_MAX 256
+#endif
+
 int i_am_cp;
 char *progname;
 

@@ -1,9 +1,10 @@
 CFLAGS = -Wall -Wextra -pedantic -std=c99
 
-BINS = ls2 makeheaders rot13 eolcheck \
-			 shhcat trim crypt sentc pcp \
+EXTRA = ls2 rot13 eolcheck slowcat cat_isprint
+
+BINS = shhcat trim crypt sentc pcp \
 			 textwide textstrike bytes rcat2 \
-			 scanfcat slowcat cat_isprint
+			 scanfcat
 
 .PHONY: clean all mostlyclean
 
