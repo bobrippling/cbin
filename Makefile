@@ -1,9 +1,8 @@
 CFLAGS = -Wall -Wextra -pedantic -std=c99
 
-BINS = ls2 makeheaders rot13 eolcheck \
-			 shhcat trim crypt sentc pcp \
-			 textwide textstrike bytes rcat2 \
-			 scanfcat slowcat cat_isprint
+BINS = rot13 eolcheck shhcat trim \
+			 crypt sentc pcp textwide \
+			 textstrike rcat2 slowcat
 
 .PHONY: clean all mostlyclean
 
@@ -33,9 +32,7 @@ crypt:crypt.o
 	@${CC} ${CFLAGS} -lcrypt -o $@ $^
 
 # extra deps
-cf:         strings.o
 pcp:        lib.o
 crypt:      lib.o
 textwide:   lib.o
 textstrike: lib.o
-bytes:      lib.o
