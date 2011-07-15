@@ -2,7 +2,8 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99
 
 BINS = rot13 eolcheck shhcat trim \
 			 crypt sentc pcp textwide \
-			 textstrike rcat2 slowcat
+			 textstrike textflip nc2 \
+			 slowcat argv
 
 .PHONY: clean all mostlyclean
 
@@ -17,8 +18,10 @@ mostlyclean:
 textwide: unicode.c
 	@echo CC $@
 	@${CC} ${CFLAGS} -o $@ $^
-
 textstrike: unicode.c
+	@echo CC $@
+	@${CC} ${CFLAGS} -o $@ $^
+textflip: unicode.c
 	@echo CC $@
 	@${CC} ${CFLAGS} -o $@ $^
 
@@ -36,3 +39,4 @@ pcp:        lib.o
 crypt:      lib.o
 textwide:   lib.o
 textstrike: lib.o
+textflip:   lib.o
