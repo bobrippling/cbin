@@ -16,23 +16,18 @@ mostlyclean:
 	rm -f *.o
 
 textwide: unicode.c
-	@echo CC $@
-	@${CC} ${CFLAGS} -o $@ $^
+	${CC} ${CFLAGS} -o $@ $^
 textstrike: unicode.c
-	@echo CC $@
-	@${CC} ${CFLAGS} -o $@ $^
+	${CC} ${CFLAGS} -o $@ $^
 textflip: unicode.c
-	@echo CC $@
-	@${CC} ${CFLAGS} -o $@ $^
+	${CC} ${CFLAGS} -o $@ $^
 
 %:%.c
-	@echo CC $@
-	@${CC} ${CFLAGS} -o $@ $^
+	${CC} ${CFLAGS} -o $@ $^
 
 # extra options
 crypt:crypt.o
-	@echo CC -lcrypt $@
-	@${CC} ${CFLAGS} -lcrypt -o $@ $^
+	${CC} ${CFLAGS} -lcrypt -o $@ $^
 
 # extra deps
 pcp:        lib.o
