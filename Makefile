@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99
 BINS = rot13 eolcheck shhcat trim \
 			 crypt sentc pcp textwide \
 			 textstrike textflip nc2 \
-			 slowcat argv
+			 slowcat argv stdouterr
 
 .PHONY: clean all mostlyclean
 
