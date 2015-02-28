@@ -13,7 +13,7 @@ int term_fd = -1;
 
 int get_term_size()
 {
-#if TIOCGSIZE
+#ifdef TIOCGSIZE
 	struct ttysize ts;
 # define COLS ts.ts_cols
 # define ROWS ts.ts_lines
